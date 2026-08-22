@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+/*
+  Sistema de tokens CoderCup
+  ---------------------------------------------------------------
+  Paleta pedida por el brief: fondo oscuro, acento magenta (#FF2E9B)
+  con detalles violeta, texto blanco/gris, bordes suaves.
+
+  Decisión tipográfica: Space Grotesk para todo lo interpretativo
+  (títulos, nombres de patrón, descripciones, UI) y JetBrains Mono
+  reservado para evidencia textual literal y datos (citas de
+  usuarios, nivel de respaldo, cantidad de evidencias, timestamps).
+  Esto refuerza visualmente la regla del brief: "diferenciar
+  evidencia de interpretación, nunca presentar una interpretación
+  como hecho".
+*/
+
+:root {
+  /* Superficies (de más profunda a más elevada) */
+  --color-surface-sunken: #06060a;
+  --color-surface-base: #0a0a0e;
+  --color-surface-raised: #141419;
+  --color-surface-overlay: #1d1d24;
+
+  /* Bordes */
+  --color-border-subtle: #24242c;
+  --color-border-strong: #34343f;
+
+  /* Texto */
+  --color-text-primary: #f4f4f6;
+  --color-text-secondary: #9c9ca8;
+  --color-text-tertiary: #65656f;
+
+  /* Acentos de marca */
+  --color-accent-magenta: #ff2e9b;
+  --color-accent-magenta-hover: #ff57ae;
+  --color-accent-magenta-pressed: #e0157f;
+  --color-accent-violet: #8b5cf6;
+  --color-accent-violet-soft: #c4b5fd;
+
+  /* Estados (usados en badges de validación y estados de UI) */
+  --color-state-pending: #f5a623;
+  --color-state-validated: #34d399;
+  --color-state-discarded: #8a8a94;
+  --color-state-error: #f35b6b;
+  --color-state-analyzing: #8b5cf6;
+}
+
+@theme inline {
+  --color-surface-sunken: var(--color-surface-sunken);
+  --color-surface-base: var(--color-surface-base);
+  --color-surface-raised: var(--color-surface-raised);
+  --color-surface-overlay: var(--color-surface-overlay);
+
+  --color-border-subtle: var(--color-border-subtle);
+  --color-border-strong: var(--color-border-strong);
+
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-tertiary: var(--color-text-tertiary);
+
+  --color-accent-magenta: var(--color-accent-magenta);
+  --color-accent-magenta-hover: var(--color-accent-magenta-hover);
+  --color-accent-magenta-pressed: var(--color-accent-magenta-pressed);
+  --color-accent-violet: var(--color-accent-violet);
+  --color-accent-violet-soft: var(--color-accent-violet-soft);
+
+  --color-state-pending: var(--color-state-pending);
+  --color-state-validated: var(--color-state-validated);
+  --color-state-discarded: var(--color-state-discarded);
+  --color-state-error: var(--color-state-error);
+  --color-state-analyzing: var(--color-state-analyzing);
+
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+}
+
+body {
+  background: var(--color-surface-base);
+  color: var(--color-text-primary);
+}
+
+/* Foco de teclado visible en toda la app (accesibilidad) */
+:focus-visible {
+  outline: 2px solid var(--color-accent-magenta);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--color-accent-magenta);
+  color: var(--color-surface-base);
+}
