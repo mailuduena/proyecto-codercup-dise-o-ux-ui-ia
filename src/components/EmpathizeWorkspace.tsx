@@ -84,11 +84,16 @@ export function EmpathizeWorkspace({
       }
 
       const { data } = await res.json();
+      const nextVersion =
+        analyses.length > 0
+          ? Math.max(...analyses.map((a) => a.version)) + 1
+          : 1;
+
       const newAnalysis = mapApiAnalysisToResult(
         data,
         projectId,
         sources.map((s) => s.id),
-        1,
+        nextVersion,
         null,
         null
       );
