@@ -13,6 +13,7 @@ import {
   FileCheck,
   AlertCircle,
   Quote,
+  ArrowRight,
 } from "lucide-react";
 import { generateId } from "@/lib/id";
 import { useAnalysis } from "@/lib/storage/useAnalysis";
@@ -21,9 +22,10 @@ import type { DesignProblem, DefineResult, SupportLevel } from "@/lib/types";
 
 interface DefineWorkspaceProps {
   projectId: string;
+  onContinueToIdeate?: () => void;
 }
 
-export function DefineWorkspace({ projectId }: DefineWorkspaceProps) {
+export function DefineWorkspace({ projectId, onContinueToIdeate }: DefineWorkspaceProps) {
   const { analyses, activeValidAnalysis } = useAnalysis(projectId);
   const { defineResult, isDefineValidated, saveDefineResult, setDefineStatus } = useDefine(projectId);
 
@@ -313,7 +315,19 @@ export function DefineWorkspace({ projectId }: DefineWorkspaceProps) {
               </div>
             </div>
 
-            {defineResult.estadoValidacion !== "validado" && (
+            {defineResult.estadoValidacion === "validado" ? (
+              onContinueToIdeate && (
+                <button
+                  id="btn-continue-to-ideate"
+                  type="button"
+                  onClick={onContinueToIdeate}
+                  className="inline-flex items-center gap-2 rounded-xl bg-accent-magenta px-4 py-2 font-sans text-xs font-semibold text-surface-base shadow-lg shadow-accent-magenta/10 hover:bg-accent-magenta-hover active:scale-[0.98] transition-all"
+                >
+                  <span>Continuar a Idear</span>
+                  <ArrowRight size={14} />
+                </button>
+              )
+            ) : (
               <div className="flex items-center gap-2">
                 <button
                   id="btn-accept-define"

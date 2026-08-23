@@ -9,6 +9,7 @@ import { Sidebar } from "./Sidebar";
 import { StageStepper } from "./StageStepper";
 import { EmpathizeWorkspace } from "./EmpathizeWorkspace";
 import { DefineWorkspace } from "./DefineWorkspace";
+import { IdeateWorkspace } from "./IdeateWorkspace";
 
 interface ProjectShellProps {
   projectId: string;
@@ -70,7 +71,13 @@ export function ProjectShell({ projectId }: ProjectShellProps) {
             />
           )}
           {currentStage === "definir" && (
-            <DefineWorkspace projectId={project.id} />
+            <DefineWorkspace
+              projectId={project.id}
+              onContinueToIdeate={() => setCurrentStage("idear")}
+            />
+          )}
+          {currentStage === "idear" && (
+            <IdeateWorkspace projectId={project.id} />
           )}
         </div>
       </div>

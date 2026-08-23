@@ -2,6 +2,7 @@ import { Lock, Check } from "lucide-react";
 import { STAGES } from "@/lib/stages";
 import { useAnalysis } from "@/lib/storage/useAnalysis";
 import { useDefine } from "@/lib/storage/useDefine";
+import { useIdeate } from "@/lib/storage/useIdeate";
 import type { StageId } from "@/lib/types";
 
 interface StageStepperProps {
@@ -13,6 +14,7 @@ interface StageStepperProps {
 export function StageStepper({ projectId, currentStage, onSelectStage }: StageStepperProps) {
   const { isValidated } = useAnalysis(projectId);
   const { isDefineValidated } = useDefine(projectId);
+  const { isIdeateValidated } = useIdeate(projectId);
 
   return (
     <div className="hidden items-center gap-2 md:flex">
@@ -25,6 +27,8 @@ export function StageStepper({ projectId, currentStage, onSelectStage }: StageSt
             ? isValidated
             : stage.id === "idear"
             ? isDefineValidated
+            : stage.id === "prototipar"
+            ? isIdeateValidated
             : false;
 
         return (

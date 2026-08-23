@@ -65,6 +65,8 @@ export interface AnalysisResult {
   createdAt: string;
 }
 
+export type ImpactEffortLevel = "Bajo" | "Medio" | "Alto";
+
 /**
  * Problema de diseño derivado de los hallazgos validados de Empatizar.
  */
@@ -86,6 +88,31 @@ export interface DefineResult {
   id: string;
   projectId: string;
   problemas: DesignProblem[];
+  estadoValidacion: ValidationStatus;
+  createdAt: string;
+}
+
+/**
+ * Alternativa de solución / idea de diseño formulada a partir de los problemas de Definir.
+ */
+export interface DesignIdea {
+  id: string;
+  titulo: string;
+  descripcion: string;
+  problemaOrigen: string;
+  howMightWeOrigen: string;
+  porQuePodriaAyudar: string;
+  impactoEstimado: ImpactEffortLevel;
+  esfuerzoEstimado: ImpactEffortLevel;
+}
+
+/**
+ * Resultado de la etapa Idear.
+ */
+export interface IdeateResult {
+  id: string;
+  projectId: string;
+  ideas: DesignIdea[];
   estadoValidacion: ValidationStatus;
   createdAt: string;
 }
