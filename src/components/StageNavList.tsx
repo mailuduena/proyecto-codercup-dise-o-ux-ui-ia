@@ -1,0 +1,115 @@
+import Link from "next/link";
+import { Check, Lock } from "lucide-react";
+import { STAGES } from "@/lib/stages";
+import { useAnalysis } from "@/lib/storage/useAnalysis";
+import type { StageId } from "@/lib/types";
+
+interface StageNavListProps {
+  projectId: string;
+  currentStage: StageId;
+}
+
+export function StageNavList({ projectId, currentStage }: StageNavListProps) {
+  const { isValidated } = useAnalysis(projectId);
+
+  return (
+    <ol className="flex flex-col gap-1">
+      {STAGES.map((stage) => {
+        const isCurrent = stage.id === currentStage;
+        const Icon = stage.icon;
+
+        // Desbloqueo reactivo: "definir" se desbloquea si el análisis está validado por el profesional
+        const isUnlocked =
+          stage.id === "empatizar"
+            ? true
+            : stage.id === "definir"
+            ? isValidated
+            : false;
+
+        const row = (
+          <div
+            className={[
+              "flex w-full items-start gap-3 rounded-xl border px-3 py-2.5 transition-colors",
+              isCurrent
+                ? "border-accent-magenta/40 bg-accent-magenta/10"
+                : isUnlocked
+                ? "border-transparent hover:border-border-strong hover:bg-surface-overlay cursor-pointer"
+                : "border-transparent opacity-60 cursor-not-allowed",
+            ].join(" ")}
+          >
+            <span
+              className={[
+                "mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg",
+                isCurrent
+                  ? "bg-accent-magenta text-surface-base"
+                  : isUnlocked
+                  ? "bg-state-validated/15 text-state-validated"
+                  : "bg-surface-overlay text-text-tertiary",
+              ].join(" ")}
+            >
+              <Icon size={15} strokeWidth={2.25} />
+            </span>
+
+            <span className="flex min-w-0 flex-1 flex-col">
+              <span className="flex items-center gap-1.5">
+                <span
+                  className={`font-mono text-[11px] tracking-wide ${
+                    isCurrent
+                      ? "text-accent-magenta"
+                      : isUnlocked
+                      ? "text-state-validated"
+                      : "text-text-tertiary"
+                  }`}
+                >
+                  0{stage.order}
+                </span>
+                <span
+                  className={`font-sans text-sm font-medium ${
+                    isCurrent
+                      ? "text-text-primary"
+                      : isUnlocked
+                      ? "text-text-primary"
+                      : "text-text-secondary"
+                  }`}
+                >
+                  {stage.label}
+                </span>
+                {isCurrent && (
+                  <Check size={13} strokeWidth={3} className="text-accent-magenta" />
+                )}
+                {stage.id === "definir" && isUnlocked && !isCurrent && (
+                  <span className="rounded bg-state-validated/20 px-1.5 py-0.2 font-mono text-[9px] text-state-validated">
+                    Desbloqueada
+                  </span>
+                )}
+                {!isUnlocked && (
+                  <Lock size={12} strokeWidth={2.5} className="text-text-tertiary" />
+                )}
+              </span>
+
+              {!isUnlocked && stage.unlockHint && (
+                <span className="mt-0.5 text-xs leading-snug text-text-tertiary">
+                  {stage.unlockHint}
+                </span>
+              )}
+            </span>
+          </div>
+        );
+
+        if (!isUnlocked) {
+          return (
+            <li key={stage.id} title={stage.unlockHint}>
+              {row}
+            </li>
+          );
+        }
+
+        return (
+          <li key={stage.id}>
+            <Link href={`/proyecto/${projectId}`}>{row}</Link>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}

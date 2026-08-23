@@ -1,0 +1,6 @@
+{
+  "name": "CoderCup",
+  "description": "Plataforma UX/UI con IA aplicada a Design Thinking. De la evidencia a la decisión, sin perder el porqué.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
