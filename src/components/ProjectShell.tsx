@@ -10,6 +10,7 @@ import { StageStepper } from "./StageStepper";
 import { EmpathizeWorkspace } from "./EmpathizeWorkspace";
 import { DefineWorkspace } from "./DefineWorkspace";
 import { IdeateWorkspace } from "./IdeateWorkspace";
+import { PrototypeWorkspace } from "./PrototypeWorkspace";
 
 interface ProjectShellProps {
   projectId: string;
@@ -77,7 +78,13 @@ export function ProjectShell({ projectId }: ProjectShellProps) {
             />
           )}
           {currentStage === "idear" && (
-            <IdeateWorkspace projectId={project.id} />
+            <IdeateWorkspace
+              projectId={project.id}
+              onContinueToPrototype={() => setCurrentStage("prototipar")}
+            />
+          )}
+          {currentStage === "prototipar" && (
+            <PrototypeWorkspace projectId={project.id} />
           )}
         </div>
       </div>

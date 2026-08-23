@@ -117,3 +117,39 @@ export interface IdeateResult {
   createdAt: string;
 }
 
+/**
+ * Pantalla o estado dentro del flujo del prototipo.
+ */
+export interface PrototypeScreen {
+  id: string;
+  orden: number;
+  nombre: string;
+  descripcionEstado: string;
+  elementosClave: string[];
+  interaccionesCriticas: string[];
+}
+
+/**
+ * Hipótesis de diseño a validar durante el testing del prototipo.
+ */
+export interface DesignHypothesis {
+  id: string;
+  enunciado: string;
+  criterioValidacion: string;
+}
+
+/**
+ * Resultado de la etapa Prototipar.
+ */
+export interface PrototypeResult {
+  id: string;
+  projectId: string;
+  concepto: string;
+  objetivo: string;
+  flujoPrincipal: string;
+  pantallas: PrototypeScreen[];
+  hipotesis: DesignHypothesis[];
+  estadoValidacion: ValidationStatus;
+  createdAt: string;
+}
+

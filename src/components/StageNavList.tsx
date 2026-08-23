@@ -3,6 +3,7 @@ import { STAGES } from "@/lib/stages";
 import { useAnalysis } from "@/lib/storage/useAnalysis";
 import { useDefine } from "@/lib/storage/useDefine";
 import { useIdeate } from "@/lib/storage/useIdeate";
+import { usePrototype } from "@/lib/storage/usePrototype";
 import type { StageId } from "@/lib/types";
 
 interface StageNavListProps {
@@ -15,6 +16,7 @@ export function StageNavList({ projectId, currentStage, onSelectStage }: StageNa
   const { isValidated } = useAnalysis(projectId);
   const { isDefineValidated } = useDefine(projectId);
   const { isIdeateValidated } = useIdeate(projectId);
+  const { isPrototypeValidated } = usePrototype(projectId);
 
   return (
     <ol id="stage-nav-list" className="flex flex-col gap-1">
@@ -27,6 +29,7 @@ export function StageNavList({ projectId, currentStage, onSelectStage }: StageNa
         // - "definir": si Empatizar está validada
         // - "idear": si Definir está validada
         // - "prototipar": si Idear está validada
+        // - "testear": si Prototipar está validada
         const isUnlocked =
           stage.id === "empatizar"
             ? true
@@ -36,6 +39,8 @@ export function StageNavList({ projectId, currentStage, onSelectStage }: StageNa
             ? isDefineValidated
             : stage.id === "prototipar"
             ? isIdeateValidated
+            : stage.id === "testear"
+            ? isPrototypeValidated
             : false;
 
         const row = (
@@ -105,6 +110,11 @@ export function StageNavList({ projectId, currentStage, onSelectStage }: StageNa
                   </span>
                 )}
                 {stage.id === "prototipar" && isUnlocked && !isCurrent && (
+                  <span className="rounded bg-state-validated/20 px-1.5 py-0.2 font-mono text-[9px] text-state-validated">
+                    Desbloqueada
+                  </span>
+                )}
+                {stage.id === "testear" && isUnlocked && !isCurrent && (
                   <span className="rounded bg-state-validated/20 px-1.5 py-0.2 font-mono text-[9px] text-state-validated">
                     Desbloqueada
                   </span>
