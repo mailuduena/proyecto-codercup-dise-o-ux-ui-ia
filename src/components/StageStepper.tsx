@@ -1,15 +1,18 @@
 import { Lock, Check } from "lucide-react";
 import { STAGES } from "@/lib/stages";
 import { useAnalysis } from "@/lib/storage/useAnalysis";
+import { useDefine } from "@/lib/storage/useDefine";
 import type { StageId } from "@/lib/types";
 
 interface StageStepperProps {
   projectId: string;
   currentStage: StageId;
+  onSelectStage?: (stageId: StageId) => void;
 }
 
-export function StageStepper({ projectId, currentStage }: StageStepperProps) {
+export function StageStepper({ projectId, currentStage, onSelectStage }: StageStepperProps) {
   const { isValidated } = useAnalysis(projectId);
+  const { isDefineValidated } = useDefine(projectId);
 
   return (
     <div className="hidden items-center gap-2 md:flex">
@@ -20,24 +23,33 @@ export function StageStepper({ projectId, currentStage }: StageStepperProps) {
             ? true
             : stage.id === "definir"
             ? isValidated
+            : stage.id === "idear"
+            ? isDefineValidated
             : false;
 
         return (
           <div key={stage.id} className="flex items-center gap-2">
-            <div
+            <button
+              type="button"
+              disabled={!isUnlocked}
+              onClick={() => {
+                if (isUnlocked && onSelectStage) {
+                  onSelectStage(stage.id);
+                }
+              }}
               className={[
                 "flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-mono text-[11px] transition-all",
                 isCurrent
-                  ? "border-accent-magenta bg-accent-magenta/10 text-text-primary"
+                  ? "border-accent-magenta bg-accent-magenta/10 text-text-primary cursor-default"
                   : isUnlocked
-                  ? "border-state-validated/40 bg-state-validated/5 text-state-validated"
-                  : "border-border-subtle text-text-tertiary",
+                  ? "border-state-validated/40 bg-state-validated/5 text-state-validated hover:bg-state-validated/15 cursor-pointer"
+                  : "border-border-subtle text-text-tertiary opacity-60 cursor-not-allowed",
               ].join(" ")}
             >
               {!isUnlocked && <Lock size={10} strokeWidth={2.5} />}
               {isUnlocked && !isCurrent && <Check size={10} strokeWidth={2.5} />}
               {stage.label}
-            </div>
+            </button>
             {index < STAGES.length - 1 && (
               <span aria-hidden="true" className="h-px w-4 bg-border-subtle" />
             )}

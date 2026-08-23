@@ -22,7 +22,15 @@ import { useAnalysis } from "@/lib/storage/useAnalysis";
 import { mapApiAnalysisToResult } from "@/lib/storage/analysisMapper";
 import type { AnalysisResult } from "@/lib/types";
 
-export function EmpathizeWorkspace({ projectId }: { projectId: string }) {
+interface EmpathizeWorkspaceProps {
+  projectId: string;
+  onContinueToDefine?: () => void;
+}
+
+export function EmpathizeWorkspace({
+  projectId,
+  onContinueToDefine,
+}: EmpathizeWorkspaceProps) {
   const { sources, addSource, removeSource } = useResearchSources(projectId);
   const {
     analyses,
@@ -109,9 +117,13 @@ export function EmpathizeWorkspace({ projectId }: { projectId: string }) {
 
   // Continuar a la etapa siguiente (Definir)
   function handleContinueToDefine() {
-    const defineNavElem = document.getElementById("stage-nav-list");
-    if (defineNavElem) {
-      defineNavElem.scrollIntoView({ behavior: "smooth" });
+    if (onContinueToDefine) {
+      onContinueToDefine();
+    } else {
+      const defineNavElem = document.getElementById("stage-nav-list");
+      if (defineNavElem) {
+        defineNavElem.scrollIntoView({ behavior: "smooth" });
+      }
     }
   }
 

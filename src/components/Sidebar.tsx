@@ -2,13 +2,15 @@ import Link from "next/link";
 import { ArrowLeft, FolderKanban } from "lucide-react";
 import { Logo } from "./Logo";
 import { StageNavList } from "./StageNavList";
-import type { Project } from "@/lib/types";
+import type { Project, StageId } from "@/lib/types";
 
 interface SidebarProps {
   project: Project;
+  currentStage: StageId;
+  onSelectStage?: (stageId: StageId) => void;
 }
 
-export function Sidebar({ project }: SidebarProps) {
+export function Sidebar({ project, currentStage, onSelectStage }: SidebarProps) {
   return (
     <aside className="flex w-64 shrink-0 flex-col border-r border-border-subtle bg-surface-raised px-4 py-6">
       <div className="flex flex-col gap-5">
@@ -37,7 +39,11 @@ export function Sidebar({ project }: SidebarProps) {
         <p className="mb-2.5 font-mono text-[11px] uppercase tracking-wide text-text-tertiary">
           Etapas del proceso
         </p>
-        <StageNavList projectId={project.id} currentStage={project.currentStage} />
+        <StageNavList
+          projectId={project.id}
+          currentStage={currentStage}
+          onSelectStage={onSelectStage}
+        />
       </div>
     </aside>
   );

@@ -1,19 +1,22 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { getStage } from "@/lib/stages";
 import { useProject } from "@/lib/storage/useProjects";
+import type { StageId } from "@/lib/types";
 import { Sidebar } from "./Sidebar";
 import { StageStepper } from "./StageStepper";
+import { EmpathizeWorkspace } from "./EmpathizeWorkspace";
+import { DefineWorkspace } from "./DefineWorkspace";
 
 interface ProjectShellProps {
   projectId: string;
-  children: ReactNode;
 }
 
-export function ProjectShell({ projectId, children }: ProjectShellProps) {
+export function ProjectShell({ projectId }: ProjectShellProps) {
   const project = useProject(projectId);
+  const [currentStage, setCurrentStage] = useState<StageId>("empatizar");
 
   if (!project) {
     return (
@@ -36,11 +39,15 @@ export function ProjectShell({ projectId, children }: ProjectShellProps) {
     );
   }
 
-  const stage = getStage(project.currentStage);
+  const stage = getStage(currentStage);
 
   return (
     <div className="flex min-h-screen flex-1">
-      <Sidebar project={project} />
+      <Sidebar
+        project={project}
+        currentStage={currentStage}
+        onSelectStage={(stageId) => setCurrentStage(stageId)}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border-subtle bg-surface-base/80 px-8 py-4 backdrop-blur">
           <div>
@@ -49,9 +56,23 @@ export function ProjectShell({ projectId, children }: ProjectShellProps) {
             </p>
             <h1 className="font-sans text-lg font-semibold text-text-primary">{stage.label}</h1>
           </div>
-          <StageStepper projectId={project.id} currentStage={project.currentStage} />
+          <StageStepper
+            projectId={project.id}
+            currentStage={currentStage}
+            onSelectStage={(stageId) => setCurrentStage(stageId)}
+          />
         </header>
-        <div className="flex-1 px-8 py-8">{children}</div>
+        <div className="flex-1 px-8 py-8">
+          {currentStage === "empatizar" && (
+            <EmpathizeWorkspace
+              projectId={project.id}
+              onContinueToDefine={() => setCurrentStage("definir")}
+            />
+          )}
+          {currentStage === "definir" && (
+            <DefineWorkspace projectId={project.id} />
+          )}
+        </div>
       </div>
     </div>
   );

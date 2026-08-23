@@ -1,16 +1,18 @@
-import Link from "next/link";
 import { Check, Lock } from "lucide-react";
 import { STAGES } from "@/lib/stages";
 import { useAnalysis } from "@/lib/storage/useAnalysis";
+import { useDefine } from "@/lib/storage/useDefine";
 import type { StageId } from "@/lib/types";
 
 interface StageNavListProps {
   projectId: string;
   currentStage: StageId;
+  onSelectStage?: (stageId: StageId) => void;
 }
 
-export function StageNavList({ projectId, currentStage }: StageNavListProps) {
+export function StageNavList({ projectId, currentStage, onSelectStage }: StageNavListProps) {
   const { isValidated } = useAnalysis(projectId);
+  const { isDefineValidated } = useDefine(projectId);
 
   return (
     <ol id="stage-nav-list" className="flex flex-col gap-1">
@@ -18,16 +20,26 @@ export function StageNavList({ projectId, currentStage }: StageNavListProps) {
         const isCurrent = stage.id === currentStage;
         const Icon = stage.icon;
 
-        // Desbloqueo reactivo: "definir" se desbloquea si el análisis está validado por el profesional
+        // Desbloqueo reactivo:
+        // - "empatizar": siempre desbloqueada
+        // - "definir": si Empatizar está validada
+        // - "idear": si Definir está validada
         const isUnlocked =
           stage.id === "empatizar"
             ? true
             : stage.id === "definir"
             ? isValidated
+            : stage.id === "idear"
+            ? isDefineValidated
             : false;
 
         const row = (
           <div
+            onClick={() => {
+              if (isUnlocked && onSelectStage) {
+                onSelectStage(stage.id);
+              }
+            }}
             className={[
               "flex w-full items-start gap-3 rounded-xl border px-3 py-2.5 transition-colors",
               isCurrent
@@ -82,6 +94,11 @@ export function StageNavList({ projectId, currentStage }: StageNavListProps) {
                     Desbloqueada
                   </span>
                 )}
+                {stage.id === "idear" && isUnlocked && !isCurrent && (
+                  <span className="rounded bg-state-validated/20 px-1.5 py-0.2 font-mono text-[9px] text-state-validated">
+                    Desbloqueada
+                  </span>
+                )}
                 {!isUnlocked && (
                   <Lock size={12} strokeWidth={2.5} className="text-text-tertiary" />
                 )}
@@ -106,10 +123,11 @@ export function StageNavList({ projectId, currentStage }: StageNavListProps) {
 
         return (
           <li key={stage.id}>
-            <Link href={`/proyecto/${projectId}`}>{row}</Link>
+            {row}
           </li>
         );
       })}
     </ol>
   );
 }
+

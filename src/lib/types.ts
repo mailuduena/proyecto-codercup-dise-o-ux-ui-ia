@@ -64,3 +64,29 @@ export interface AnalysisResult {
   correccionProfesional: string | null;
   createdAt: string;
 }
+
+/**
+ * Problema de diseño derivado de los hallazgos validados de Empatizar.
+ */
+export interface DesignProblem {
+  id: string;
+  titulo: string;
+  problema: string;
+  necesidadUsuario: string;
+  patronOrigen: string;
+  evidenciasOrigen: string[];
+  nivelRespaldo: SupportLevel;
+  howMightWe: string;
+}
+
+/**
+ * Resultado de la etapa Definir.
+ */
+export interface DefineResult {
+  id: string;
+  projectId: string;
+  problemas: DesignProblem[];
+  estadoValidacion: ValidationStatus;
+  createdAt: string;
+}
+
