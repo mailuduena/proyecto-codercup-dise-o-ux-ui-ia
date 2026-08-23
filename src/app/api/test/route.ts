@@ -144,12 +144,10 @@ function buildFallbackTestPlan(prototipo: PrototypeResult) {
 }
 
 export async function POST(req: NextRequest) {
+  let requestData: { prototipoValidado?: PrototypeResult; feedbackProfesional?: string } = {};
   try {
-    const body = await req.json();
-    const { prototipoValidado, feedbackProfesional } = body as {
-      prototipoValidado: PrototypeResult;
-      feedbackProfesional?: string;
-    };
+    requestData = await req.json();
+    const { prototipoValidado, feedbackProfesional } = requestData;
 
     if (!prototipoValidado || !prototipoValidado.pantallas || prototipoValidado.pantallas.length === 0) {
       return NextResponse.json(
@@ -180,9 +178,9 @@ REGLAS METODOLÓGICAS INQUEBRANTABLES:
 7. CRITERIOS DE EVALUACIÓN EXPLÍCITAMENTE CONDICIONALES:
    - Estamos definiendo QUÉ evidencia futura apoyaría o cuestionaría una hipótesis, NO afirmando que esa evidencia ya existe.
    - PROHIBIDO usar redacciones como resultados anticipados (ej. 'Los participantes identifican...', 'Los usuarios declaran...').
-   - OBLIGATORIO usar fórmulas condicionales:
-     * Para evidencia que apoyaría: comenzar con "Apoyaría la hipótesis observar que..." o "Sería evidencia de apoyo que durante el test...".
-     * Para evidencia que cuestionaría: comenzar con "Cuestionaría la hipótesis observar que..." o "Sería evidencia que cuestiona la hipótesis que durante el test...".
+   - Usar fórmulas condicionales para describir evidencia futura:
+     * Para evidencia que apoyaría: formular como "Apoyaría la hipótesis observar que durante el test..." o "Sería evidencia de apoyo que durante el test...".
+     * Para evidencia que cuestionaría: formular como "Cuestionaría la hipótesis observar que durante el test..." o "Sería evidencia que cuestiona la hipótesis que durante el test...".
    - PROHIBIDO usar formulaciones absolutas como "certeza absoluta", "total tranquilidad", "sin ningún tipo de duda".
    - PROHIBIDO inventar porcentajes, tasas, métricas cuantitativas o umbrales temporales (ej. NO usar "80% de usuarios", "menos de 30 segundos").
 8. NO INVENTAR RESULTADOS NI AFIRMAR QUE EL TEST FUE EJECUTADO: El test todavía NO ha ocurrido. Esto es un plan de preparación para la prueba con usuarios.
@@ -219,7 +217,7 @@ ${
     : ""
 }
 
-Genera el plan estructurado de test de usabilidad (objetivo del test, perfil cualitativo de participantes, escenario neutral, entre 3 y 5 tareas con consignas neutrales, de 3 a 6 preguntas abiertas, aspectos a observar y criterios cualitativos para cada hipótesis).
+Genera el plan estructurado de test de usabilidad (objetivo del test, perfil cualitativo de participantes, escenario neutral, entre 3 y 5 tareas con consignas neutrales, de 3 a 6 preguntas abiertas, aspectos a observar y criterios cualitativos condicionales para cada hipótesis).
 `.trim();
 
     const response = await ai.models.generateContent({
@@ -238,16 +236,24 @@ Genera el plan estructurado de test de usabilidad (objetivo del test, perfil cua
     }
 
     const parsed = JSON.parse(response.text);
+
+    // Validación y normalización defensiva de criterios cualitativos
+    if (parsed.criteriosEvaluacion && Array.isArray(parsed.criteriosEvaluacion)) {
+      parsed.criteriosEvaluacion = parsed.criteriosEvaluacion.map(
+        (crit: { hipotesis: string; evidenciaApoyaria?: string; evidenciaCuestionaria?: string }) => ({
+          hipotesis: crit.hipotesis,
+          evidenciaApoyaria: crit.evidenciaApoyaria || "Apoyaría la hipótesis observar que durante el test los usuarios completan el recorrido de manera autónoma y comprensible.",
+          evidenciaCuestionaria: crit.evidenciaCuestionaria || "Cuestionaría la hipótesis observar que durante el test surgen bloqueos o interpretaciones erróneas del flujo.",
+        })
+      );
+    }
+
     return NextResponse.json(parsed);
   } catch (err: unknown) {
     console.error("Error en API /api/test:", err);
-    try {
-      const body = await req.json().catch(() => ({}));
-      if (body.prototipoValidado) {
-        return NextResponse.json(buildFallbackTestPlan(body.prototipoValidado));
-      }
-    } catch {
-      // Ignorar
+    if (requestData.prototipoValidado) {
+      console.warn("Utilizando plan de test metodológico estructurado como fallback seguro.");
+      return NextResponse.json(buildFallbackTestPlan(requestData.prototipoValidado));
     }
     return NextResponse.json(
       { error: "No se pudo procesar la etapa Testear.", details: err instanceof Error ? err.message : String(err) },
