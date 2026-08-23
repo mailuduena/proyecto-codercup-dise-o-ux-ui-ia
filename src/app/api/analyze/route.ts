@@ -116,7 +116,7 @@ const analysisSchema: Schema = {
   ],
 };
 
-const SYSTEM_INSTRUCTION = `Eres el motor de análisis de investigación UX/UI para la etapa de EMPATIZAR en Design Thinking dentro de CoderCup.
+const SYSTEM_INSTRUCTION = `Eres el motor de análisis de investigación UX/UI para la etapa de EMPATIZAR en Design Thinking dentro de TraceUX.
 
 PRINCIPIO FUNDAMENTAL:
 "LA IA PROPONE. EL PROFESIONAL DECIDE."

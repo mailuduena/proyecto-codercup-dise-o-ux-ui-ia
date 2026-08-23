@@ -1,5 +1,5 @@
 /**
- * Modelo de datos conceptual de CoderCup (sección 18 del brief).
+ * Modelo de datos conceptual de TraceUX (sección 18 del brief).
  * Estos tipos son el contrato compartido entre las 5 etapas. Por ahora
  * solo Project se persiste (bloque 3); ResearchSource y AnalysisResult
  * quedan definidos para que el bloque de Empatizar los use sin fricción.

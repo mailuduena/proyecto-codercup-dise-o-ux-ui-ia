@@ -14,9 +14,9 @@ import "@fontsource/jetbrains-mono/600.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CoderCup — De la evidencia a la decisión",
+  title: "TraceUX — De la evidencia a la decisión",
   description:
-    "Plataforma UX/UI con IA aplicada a Design Thinking. La IA propone, el profesional decide.",
+    "Plataforma UX/UI con IA aplicada a Design Thinking. De la evidencia a la decisión, sin perder el porqué. La IA propone. El profesional decide.",
 };
 
 export default function RootLayout({
