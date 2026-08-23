@@ -7,6 +7,7 @@ import {
   Layers,
   Inbox,
   AlertCircle,
+  ShieldCheck,
 } from "lucide-react";
 import { EmptyState } from "./EmptyState";
 import { ResearchSourceForm } from "./ResearchSourceForm";
@@ -25,7 +26,9 @@ export function EmpathizeWorkspace({ projectId }: { projectId: string }) {
   const { sources, addSource, removeSource } = useResearchSources(projectId);
   const {
     analyses,
+    activeValidAnalysis,
     latestAnalysis,
+    isValidated,
     saveAnalysis,
     setStatus,
     createNextVersion,
@@ -42,9 +45,10 @@ export function EmpathizeWorkspace({ projectId }: { projectId: string }) {
 
   const hasSources = sources.length > 0;
 
-  // Derivar la versión activa: si la seleccionada existe en el proyecto usarla, sino usar la última
+  // Derivar la versión activa: si la seleccionada existe en el proyecto usarla, sino usar la vigente activa
   const activeAnalysis: AnalysisResult | null =
     (selectedAnalysisId && analyses.find((a) => a.id === selectedAnalysisId)) ||
+    activeValidAnalysis ||
     latestAnalysis ||
     null;
 
@@ -101,6 +105,14 @@ export function EmpathizeWorkspace({ projectId }: { projectId: string }) {
   function handleDiscard() {
     if (!activeAnalysis) return;
     setStatus(activeAnalysis.id, "descartado");
+  }
+
+  // Continuar a la etapa siguiente (Definir)
+  function handleContinueToDefine() {
+    const defineNavElem = document.getElementById("stage-nav-list");
+    if (defineNavElem) {
+      defineNavElem.scrollIntoView({ behavior: "smooth" });
+    }
   }
 
   // Abrir modal de edición
@@ -224,30 +236,40 @@ export function EmpathizeWorkspace({ projectId }: { projectId: string }) {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              id="btn-analyze-ai"
-              type="button"
-              disabled={!hasSources || isAnalyzing || isRegenerating}
-              onClick={handleAnalyze}
-              className={[
-                "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 font-sans text-sm font-semibold transition-all",
-                hasSources && !isAnalyzing
-                  ? "bg-accent-magenta text-surface-base hover:bg-accent-magenta-hover active:scale-[0.98] shadow-lg shadow-accent-magenta/10"
-                  : "border border-border-strong bg-surface-overlay text-text-tertiary cursor-not-allowed",
-              ].join(" ")}
-            >
-              {isAnalyzing ? (
-                <>
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-surface-base border-t-transparent" />
-                  Analizando evidencia...
-                </>
-              ) : (
-                <>
-                  <Sparkles size={15} />
-                  {analyses.length > 0 ? "Re-analizar investigación" : "Analizar con IA"}
-                </>
-              )}
-            </button>
+            {isValidated ? (
+              <div
+                id="status-stage-validated"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-state-validated/40 bg-state-validated/10 px-3.5 py-2 font-sans text-xs font-semibold text-state-validated"
+              >
+                <ShieldCheck size={15} />
+                <span>Etapa validada</span>
+              </div>
+            ) : (
+              <button
+                id="btn-analyze-ai"
+                type="button"
+                disabled={!hasSources || isAnalyzing || isRegenerating}
+                onClick={handleAnalyze}
+                className={[
+                  "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 font-sans text-sm font-semibold transition-all",
+                  hasSources && !isAnalyzing
+                    ? "bg-accent-magenta text-surface-base hover:bg-accent-magenta-hover active:scale-[0.98] shadow-lg shadow-accent-magenta/10"
+                    : "border border-border-strong bg-surface-overlay text-text-tertiary cursor-not-allowed",
+                ].join(" ")}
+              >
+                {isAnalyzing ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-surface-base border-t-transparent" />
+                    Analizando evidencia...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={15} />
+                    {analyses.length > 0 ? "Re-analizar investigación" : "Analizar con IA"}
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </div>
 
@@ -280,13 +302,14 @@ export function EmpathizeWorkspace({ projectId }: { projectId: string }) {
               onSelectVersion={(selected) => setSelectedAnalysisId(selected.id)}
             />
 
-            {/* Banner de Validación Profesional (Aceptar / Editar / Descartar) */}
+            {/* Banner de Validación Profesional (Aceptar / Editar / Descartar o Continuar a Definir) */}
             <ValidationBanner
               status={activeAnalysis.estadoValidacion}
               version={activeAnalysis.version}
               onAccept={handleAccept}
               onEdit={handleOpenEdit}
               onDiscard={handleDiscard}
+              onContinueToDefine={handleContinueToDefine}
             />
 
             {/* Resumen objetivo de la investigación */}

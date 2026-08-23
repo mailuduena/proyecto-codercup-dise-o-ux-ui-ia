@@ -1,4 +1,4 @@
-import { CheckCircle2, Edit3, Trash2, Clock, AlertTriangle, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Edit3, Trash2, Clock, AlertTriangle, ShieldCheck, ArrowRight } from "lucide-react";
 import type { ValidationStatus } from "@/lib/types";
 
 interface ValidationBannerProps {
@@ -7,6 +7,7 @@ interface ValidationBannerProps {
   onAccept: () => void;
   onEdit: () => void;
   onDiscard: () => void;
+  onContinueToDefine?: () => void;
   disabled?: boolean;
 }
 
@@ -16,6 +17,7 @@ export function ValidationBanner({
   onAccept,
   onEdit,
   onDiscard,
+  onContinueToDefine,
   disabled = false,
 }: ValidationBannerProps) {
   const isPending = status === "pendiente";
@@ -86,53 +88,65 @@ export function ValidationBanner({
 
       {/* Botones de acción profesional */}
       <div className="flex flex-wrap items-center gap-2 self-end sm:self-center">
-        {/* ACEPTAR */}
-        <button
-          id="btn-accept-analysis"
-          type="button"
-          disabled={disabled || isValidated}
-          onClick={onAccept}
-          className={[
-            "inline-flex items-center gap-1.5 rounded-lg border px-3.5 py-1.5 font-sans text-xs font-medium transition-all",
-            isValidated
-              ? "border-state-validated/50 bg-state-validated/20 text-state-validated cursor-default"
-              : "border-state-validated/40 bg-state-validated/10 text-state-validated hover:bg-state-validated/20 hover:border-state-validated active:scale-[0.98]",
-            disabled && !isValidated ? "opacity-50 cursor-not-allowed" : "",
-          ].join(" ")}
-        >
-          <CheckCircle2 size={14} />
-          {isValidated ? "Validado" : "Aceptar"}
-        </button>
+        {isValidated ? (
+          <button
+            id="btn-continue-to-define"
+            type="button"
+            onClick={onContinueToDefine}
+            className="inline-flex items-center gap-2 rounded-xl bg-accent-magenta px-4 py-2 font-sans text-xs font-semibold text-surface-base shadow-md shadow-accent-magenta/15 transition-all hover:bg-accent-magenta-hover active:scale-[0.98]"
+          >
+            <span>Continuar a Definir</span>
+            <ArrowRight size={14} />
+          </button>
+        ) : (
+          <>
+            {/* ACEPTAR */}
+            <button
+              id="btn-accept-analysis"
+              type="button"
+              disabled={disabled}
+              onClick={onAccept}
+              className={[
+                "inline-flex items-center gap-1.5 rounded-lg border px-3.5 py-1.5 font-sans text-xs font-medium transition-all",
+                "border-state-validated/40 bg-state-validated/10 text-state-validated hover:bg-state-validated/20 hover:border-state-validated active:scale-[0.98]",
+                disabled ? "opacity-50 cursor-not-allowed" : "",
+              ].join(" ")}
+            >
+              <CheckCircle2 size={14} />
+              Aceptar
+            </button>
 
-        {/* EDITAR */}
-        <button
-          id="btn-edit-analysis"
-          type="button"
-          disabled={disabled}
-          onClick={onEdit}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-accent-violet/40 bg-accent-violet/10 px-3.5 py-1.5 font-sans text-xs font-medium text-accent-violet-soft transition-all hover:border-accent-violet hover:bg-accent-violet/20 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <Edit3 size={14} />
-          Editar
-        </button>
+            {/* EDITAR */}
+            <button
+              id="btn-edit-analysis"
+              type="button"
+              disabled={disabled}
+              onClick={onEdit}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-accent-violet/40 bg-accent-violet/10 px-3.5 py-1.5 font-sans text-xs font-medium text-accent-violet-soft transition-all hover:border-accent-violet hover:bg-accent-violet/20 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Edit3 size={14} />
+              Editar
+            </button>
 
-        {/* DESCARTAR */}
-        <button
-          id="btn-discard-analysis"
-          type="button"
-          disabled={disabled || isDiscarded}
-          onClick={onDiscard}
-          className={[
-            "inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 font-sans text-xs font-medium transition-all",
-            isDiscarded
-              ? "border-border-strong bg-surface-overlay text-text-tertiary cursor-default"
-              : "border-border-subtle bg-surface-base text-text-tertiary hover:border-state-error/40 hover:bg-state-error/10 hover:text-state-error active:scale-[0.98]",
-            disabled && !isDiscarded ? "opacity-50 cursor-not-allowed" : "",
-          ].join(" ")}
-        >
-          <Trash2 size={13} />
-          {isDiscarded ? "Descartado" : "Descartar"}
-        </button>
+            {/* DESCARTAR */}
+            <button
+              id="btn-discard-analysis"
+              type="button"
+              disabled={disabled || isDiscarded}
+              onClick={onDiscard}
+              className={[
+                "inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 font-sans text-xs font-medium transition-all",
+                isDiscarded
+                  ? "border-border-strong bg-surface-overlay text-text-tertiary cursor-default"
+                  : "border-border-subtle bg-surface-base text-text-tertiary hover:border-state-error/40 hover:bg-state-error/10 hover:text-state-error active:scale-[0.98]",
+                disabled && !isDiscarded ? "opacity-50 cursor-not-allowed" : "",
+              ].join(" ")}
+            >
+              <Trash2 size={13} />
+              {isDiscarded ? "Descartado" : "Descartar"}
+            </button>
+          </>
+        )}
       </div>
     </section>
   );

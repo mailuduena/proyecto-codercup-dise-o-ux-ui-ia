@@ -28,14 +28,25 @@ export function useAnalysis(projectId: string) {
       .sort((a, b) => a.version - b.version);
   }, [allAnalyses, projectId]);
 
+  // Versión vigente: si la última cronológica no está descartada, es esa; si la última fue descartada, vuelve a la última validada
+  const activeValidAnalysis = useMemo(() => {
+    if (projectAnalyses.length === 0) return null;
+    const last = projectAnalyses[projectAnalyses.length - 1];
+    if (last.estadoValidacion !== "descartado") return last;
+    const lastValidated = [...projectAnalyses]
+      .reverse()
+      .find((a) => a.estadoValidacion === "validado");
+    return lastValidated || last;
+  }, [projectAnalyses]);
+
   const latestAnalysis = useMemo(() => {
     if (projectAnalyses.length === 0) return null;
     return projectAnalyses[projectAnalyses.length - 1];
   }, [projectAnalyses]);
 
   const isValidated = useMemo(() => {
-    return latestAnalysis?.estadoValidacion === "validado";
-  }, [latestAnalysis]);
+    return activeValidAnalysis?.estadoValidacion === "validado";
+  }, [activeValidAnalysis]);
 
   function saveAnalysis(analysis: AnalysisResult) {
     localAnalysisRepository.save(analysis);
@@ -65,6 +76,7 @@ export function useAnalysis(projectId: string) {
 
   return {
     analyses: projectAnalyses,
+    activeValidAnalysis,
     latestAnalysis,
     isValidated,
     saveAnalysis,

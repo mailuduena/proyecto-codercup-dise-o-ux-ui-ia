@@ -13,7 +13,7 @@ export function StageNavList({ projectId, currentStage }: StageNavListProps) {
   const { isValidated } = useAnalysis(projectId);
 
   return (
-    <ol className="flex flex-col gap-1">
+    <ol id="stage-nav-list" className="flex flex-col gap-1">
       {STAGES.map((stage) => {
         const isCurrent = stage.id === currentStage;
         const Icon = stage.icon;

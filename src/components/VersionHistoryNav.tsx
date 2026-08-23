@@ -14,6 +14,20 @@ export function VersionHistoryNav({
 }: VersionHistoryNavProps) {
   if (analyses.length <= 1) return null;
 
+  // Determinar la versión vigente (Actual):
+  // 1. Si la última versión cronológica NO está descartada, esa es la vigente (sea pendiente o validada).
+  // 2. Si la última versión está descartada, la versión vigente vuelve a ser la última versión validada.
+  // 3. Una versión descartada NUNCA es 'Actual'.
+  const lastAnalysis = analyses[analyses.length - 1];
+  const lastValidated = [...analyses]
+    .reverse()
+    .find((a) => a.estadoValidacion === "validado");
+
+  const currentActiveAnalysis =
+    lastAnalysis?.estadoValidacion !== "descartado"
+      ? lastAnalysis
+      : lastValidated || null;
+
   return (
     <div
       id="version-history-nav"
@@ -27,9 +41,20 @@ export function VersionHistoryNav({
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        {analyses.map((a, idx) => {
+        {analyses.map((a) => {
           const isSelected = a.id === selectedVersionId;
-          const isLatest = idx === analyses.length - 1;
+          const isCurrentActive = currentActiveAnalysis?.id === a.id;
+
+          // Si es anterior a la versión activa/vigente (o si no es la vigente ni está descartada cuando ya hay una versión posterior validada/vigente), se muestra como "reemplazada"
+          const isSuperseded =
+            !isCurrentActive &&
+            a.estadoValidacion !== "descartado" &&
+            currentActiveAnalysis !== null &&
+            a.version < currentActiveAnalysis.version;
+
+          const displayStatus = isSuperseded
+            ? "reemplazada"
+            : a.estadoValidacion;
 
           return (
             <button
@@ -45,7 +70,7 @@ export function VersionHistoryNav({
             >
               <GitCommit size={12} />
               <span>v0{a.version}</span>
-              {isLatest && (
+              {isCurrentActive && (
                 <span className="rounded bg-accent-magenta/20 px-1 py-0.2 text-[9px] text-accent-magenta">
                   Actual
                 </span>
@@ -53,14 +78,14 @@ export function VersionHistoryNav({
               <span
                 className={[
                   "text-[10px]",
-                  a.estadoValidacion === "validado"
+                  displayStatus === "validado"
                     ? "text-state-validated"
-                    : a.estadoValidacion === "descartado"
+                    : displayStatus === "descartado" || displayStatus === "reemplazada"
                     ? "text-text-tertiary"
                     : "text-state-pending",
                 ].join(" ")}
               >
-                ({a.estadoValidacion})
+                ({displayStatus})
               </span>
             </button>
           );
