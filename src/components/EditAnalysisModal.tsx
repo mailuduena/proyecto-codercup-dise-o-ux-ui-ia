@@ -11,16 +11,13 @@ interface EditAnalysisModalProps {
   isLoading?: boolean;
 }
 
-export function EditAnalysisModal({
-  isOpen,
+function EditAnalysisDialog({
   currentVersion,
   onClose,
   onSubmit,
   isLoading = false,
-}: EditAnalysisModalProps) {
+}: Omit<EditAnalysisModalProps, "isOpen">) {
   const [feedback, setFeedback] = useState("");
-
-  if (!isOpen) return null;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -119,5 +116,24 @@ export function EditAnalysisModal({
         </form>
       </div>
     </div>
+  );
+}
+
+export function EditAnalysisModal({
+  isOpen,
+  currentVersion,
+  onClose,
+  onSubmit,
+  isLoading = false,
+}: EditAnalysisModalProps) {
+  if (!isOpen) return null;
+
+  return (
+    <EditAnalysisDialog
+      currentVersion={currentVersion}
+      onClose={onClose}
+      onSubmit={onSubmit}
+      isLoading={isLoading}
+    />
   );
 }
