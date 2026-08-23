@@ -4,6 +4,7 @@ import { useAnalysis } from "@/lib/storage/useAnalysis";
 import { useDefine } from "@/lib/storage/useDefine";
 import { useIdeate } from "@/lib/storage/useIdeate";
 import { usePrototype } from "@/lib/storage/usePrototype";
+import { useTest } from "@/lib/storage/useTest";
 import type { StageId } from "@/lib/types";
 
 interface StageStepperProps {
@@ -17,6 +18,7 @@ export function StageStepper({ projectId, currentStage, onSelectStage }: StageSt
   const { isDefineValidated } = useDefine(projectId);
   const { isIdeateValidated } = useIdeate(projectId);
   const { isPrototypeValidated } = usePrototype(projectId);
+  const { isTestValidated } = useTest(projectId);
 
   return (
     <div className="hidden items-center gap-2 md:flex">
@@ -35,6 +37,19 @@ export function StageStepper({ projectId, currentStage, onSelectStage }: StageSt
             ? isPrototypeValidated
             : false;
 
+        const isCompleted =
+          stage.id === "empatizar"
+            ? isValidated
+            : stage.id === "definir"
+            ? isDefineValidated
+            : stage.id === "idear"
+            ? isIdeateValidated
+            : stage.id === "prototipar"
+            ? isPrototypeValidated
+            : stage.id === "testear"
+            ? isTestValidated
+            : false;
+
         return (
           <div key={stage.id} className="flex items-center gap-2">
             <button
@@ -49,13 +64,15 @@ export function StageStepper({ projectId, currentStage, onSelectStage }: StageSt
                 "flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-mono text-[11px] transition-all",
                 isCurrent
                   ? "border-accent-magenta bg-accent-magenta/10 text-text-primary cursor-default"
-                  : isUnlocked
+                  : isCompleted
                   ? "border-state-validated/40 bg-state-validated/5 text-state-validated hover:bg-state-validated/15 cursor-pointer"
+                  : isUnlocked
+                  ? "border-accent-magenta/30 bg-surface-base text-text-primary hover:border-accent-magenta cursor-pointer"
                   : "border-border-subtle text-text-tertiary opacity-60 cursor-not-allowed",
               ].join(" ")}
             >
               {!isUnlocked && <Lock size={10} strokeWidth={2.5} />}
-              {isUnlocked && !isCurrent && <Check size={10} strokeWidth={2.5} />}
+              {isCompleted && <Check size={10} strokeWidth={2.5} />}
               {stage.label}
             </button>
             {index < STAGES.length - 1 && (

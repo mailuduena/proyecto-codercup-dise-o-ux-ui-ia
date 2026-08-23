@@ -55,7 +55,7 @@ const testPlanSchema: Schema = {
     },
     criteriosEvaluacion: {
       type: Type.ARRAY,
-      description: "Criterios cualitativos para evaluar cada hipótesis (sin inventar porcentajes ni métricas cuantitativas arbitrarias).",
+      description: "Criterios cualitativos para evaluar cada hipótesis utilizando formulaciones explícitamente condicionales sobre qué evidencia futura apoyaría o cuestionaría la hipótesis (sin inventar porcentajes ni métricas cuantitativas arbitrarias).",
       items: {
         type: Type.OBJECT,
         properties: {
@@ -65,11 +65,11 @@ const testPlanSchema: Schema = {
           },
           evidenciaApoyaria: {
             type: Type.STRING,
-            description: "Qué observaciones o verbalizaciones cualitativas respaldarían la hipótesis.",
+            description: "Redacción explícitamente condicional de evidencia futura de apoyo. Ejemplo: 'Apoyaría la hipótesis observar que...' o 'Sería evidencia de apoyo que durante el test...'. Prohibido afirmar resultados anticipados o términos absolutos.",
           },
           evidenciaCuestionaria: {
             type: Type.STRING,
-            description: "Qué dificultades, bloqueos o interpretaciones erróneas cuestionarían la hipótesis.",
+            description: "Redacción explícitamente condicional de evidencia futura que cuestionaría la hipótesis. Ejemplo: 'Cuestionaría la hipótesis observar que...' o 'Sería evidencia que cuestiona la hipótesis que durante el test...'. Prohibido afirmar resultados anticipados o términos absolutos.",
           },
         },
         required: ["hipotesis", "evidenciaApoyaria", "evidenciaCuestionaria"],
@@ -137,8 +137,8 @@ function buildFallbackTestPlan(prototipo: PrototypeResult) {
     ],
     criteriosEvaluacion: hipotesisList.map((h) => ({
       hipotesis: h.enunciado,
-      evidenciaApoyaria: "El participante avanza de forma fluida, verbaliza comprensión del estado en cada paso y no requiere clarificaciones externas para completar el recorrido.",
-      evidenciaCuestionaria: "El participante manifiesta confusión sobre el paso siguiente, se detiene reiteradamente por falta de pistas visuales o interpreta erróneamente la confirmación final.",
+      evidenciaApoyaria: "Apoyaría la hipótesis observar que la persona interactúa de manera autónoma con las secciones clave, verbaliza comprensión del estado en cada paso y completa el recorrido sin solicitar aclaraciones sobre el significado de las opciones.",
+      evidenciaCuestionaria: "Cuestionaría la hipótesis observar que la persona manifiesta dudas reiteradas sobre el siguiente paso, se detiene por falta de referencias visuales claras o interpreta de forma errónea la confirmación final del flujo.",
     })),
   };
 }
@@ -177,7 +177,14 @@ REGLAS METODOLÓGICAS INQUEBRANTABLES:
 4. ESCENARIO Y TAREAS NEUTRALES: Las consignas para el participante NO deben revelar la solución, ni decir dónde hacer clic ni guiar hacia el camino óptimo.
 5. PREGUNTAS POSTERIORES ABIERTAS: Preguntas neutras (ej. "¿Cómo describirías el proceso?"), prohibido usar preguntas sesgadas como "¿Te pareció fácil?".
 6. QUÉ OBSERVAR: Enumera comportamientos a observar (dudas, pausas, retrocesos, errores, verbalizaciones, comprensión del estado).
-7. CRITERIOS DE EVALUACIÓN CUALITATIVOS: Explica qué observaciones apoyarían o cuestionarían cada hipótesis. PROHIBIDO inventar porcentajes, tasas, métricas cuantitativas o umbrales temporales (ej. NO usar "80% de usuarios", "menos de 30 segundos").
+7. CRITERIOS DE EVALUACIÓN EXPLÍCITAMENTE CONDICIONALES:
+   - Estamos definiendo QUÉ evidencia futura apoyaría o cuestionaría una hipótesis, NO afirmando que esa evidencia ya existe.
+   - PROHIBIDO usar redacciones como resultados anticipados (ej. 'Los participantes identifican...', 'Los usuarios declaran...').
+   - OBLIGATORIO usar fórmulas condicionales:
+     * Para evidencia que apoyaría: comenzar con "Apoyaría la hipótesis observar que..." o "Sería evidencia de apoyo que durante el test...".
+     * Para evidencia que cuestionaría: comenzar con "Cuestionaría la hipótesis observar que..." o "Sería evidencia que cuestiona la hipótesis que durante el test...".
+   - PROHIBIDO usar formulaciones absolutas como "certeza absoluta", "total tranquilidad", "sin ningún tipo de duda".
+   - PROHIBIDO inventar porcentajes, tasas, métricas cuantitativas o umbrales temporales (ej. NO usar "80% de usuarios", "menos de 30 segundos").
 8. NO INVENTAR RESULTADOS NI AFIRMAR QUE EL TEST FUE EJECUTADO: El test todavía NO ha ocurrido. Esto es un plan de preparación para la prueba con usuarios.
 `.trim();
 

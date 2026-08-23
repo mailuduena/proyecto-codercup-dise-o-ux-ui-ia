@@ -4,6 +4,7 @@ import { useAnalysis } from "@/lib/storage/useAnalysis";
 import { useDefine } from "@/lib/storage/useDefine";
 import { useIdeate } from "@/lib/storage/useIdeate";
 import { usePrototype } from "@/lib/storage/usePrototype";
+import { useTest } from "@/lib/storage/useTest";
 import type { StageId } from "@/lib/types";
 
 interface StageNavListProps {
@@ -17,6 +18,7 @@ export function StageNavList({ projectId, currentStage, onSelectStage }: StageNa
   const { isDefineValidated } = useDefine(projectId);
   const { isIdeateValidated } = useIdeate(projectId);
   const { isPrototypeValidated } = usePrototype(projectId);
+  const { isTestValidated } = useTest(projectId);
 
   return (
     <ol id="stage-nav-list" className="flex flex-col gap-1">
@@ -43,6 +45,19 @@ export function StageNavList({ projectId, currentStage, onSelectStage }: StageNa
             ? isPrototypeValidated
             : false;
 
+        const isCompleted =
+          stage.id === "empatizar"
+            ? isValidated
+            : stage.id === "definir"
+            ? isDefineValidated
+            : stage.id === "idear"
+            ? isIdeateValidated
+            : stage.id === "prototipar"
+            ? isPrototypeValidated
+            : stage.id === "testear"
+            ? isTestValidated
+            : false;
+
         const row = (
           <div
             onClick={() => {
@@ -64,8 +79,10 @@ export function StageNavList({ projectId, currentStage, onSelectStage }: StageNa
                 "mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg",
                 isCurrent
                   ? "bg-accent-magenta text-surface-base"
-                  : isUnlocked
+                  : isCompleted
                   ? "bg-state-validated/15 text-state-validated"
+                  : isUnlocked
+                  ? "bg-accent-magenta/15 text-accent-magenta"
                   : "bg-surface-overlay text-text-tertiary",
               ].join(" ")}
             >
@@ -78,8 +95,10 @@ export function StageNavList({ projectId, currentStage, onSelectStage }: StageNa
                   className={`font-mono text-[11px] tracking-wide ${
                     isCurrent
                       ? "text-accent-magenta"
-                      : isUnlocked
+                      : isCompleted
                       ? "text-state-validated"
+                      : isUnlocked
+                      ? "text-text-primary"
                       : "text-text-tertiary"
                   }`}
                 >
@@ -89,32 +108,32 @@ export function StageNavList({ projectId, currentStage, onSelectStage }: StageNa
                   className={`font-sans text-sm font-medium ${
                     isCurrent
                       ? "text-text-primary"
-                      : isUnlocked
+                      : isCompleted || isUnlocked
                       ? "text-text-primary"
                       : "text-text-secondary"
                   }`}
                 >
                   {stage.label}
                 </span>
-                {isCurrent && (
-                  <Check size={13} strokeWidth={3} className="text-accent-magenta" />
+                {isCompleted && (
+                  <Check size={13} strokeWidth={3} className="text-state-validated" />
                 )}
-                {stage.id === "definir" && isUnlocked && !isCurrent && (
+                {stage.id === "definir" && isUnlocked && !isCurrent && !isCompleted && (
                   <span className="rounded bg-state-validated/20 px-1.5 py-0.2 font-mono text-[9px] text-state-validated">
                     Desbloqueada
                   </span>
                 )}
-                {stage.id === "idear" && isUnlocked && !isCurrent && (
+                {stage.id === "idear" && isUnlocked && !isCurrent && !isCompleted && (
                   <span className="rounded bg-state-validated/20 px-1.5 py-0.2 font-mono text-[9px] text-state-validated">
                     Desbloqueada
                   </span>
                 )}
-                {stage.id === "prototipar" && isUnlocked && !isCurrent && (
+                {stage.id === "prototipar" && isUnlocked && !isCurrent && !isCompleted && (
                   <span className="rounded bg-state-validated/20 px-1.5 py-0.2 font-mono text-[9px] text-state-validated">
                     Desbloqueada
                   </span>
                 )}
-                {stage.id === "testear" && isUnlocked && !isCurrent && (
+                {stage.id === "testear" && isUnlocked && !isCurrent && !isCompleted && (
                   <span className="rounded bg-state-validated/20 px-1.5 py-0.2 font-mono text-[9px] text-state-validated">
                     Desbloqueada
                   </span>
