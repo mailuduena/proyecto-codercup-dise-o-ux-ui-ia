@@ -136,144 +136,33 @@ REGLAS METODOLÓGICAS NO NEGOCIABLES:
 
 /**
  * Fallback metodológico estricto en caso de que no haya API key o falle la llamada remota.
- * Respeta exactamente el esquema y las reglas metodológicas de UX.
+ * Respeta exactamente el esquema y las reglas metodológicas de UX:
+ * - No inventa citas, patrones ni usuarios.
+ * - Conserva las fuentes reales como observaciones aisladas.
+ * - No infiere patrones sin análisis semántico.
  */
 function generateMethodologicalFallback(
-  sources: { id: string; content: string }[],
-  previousAnalysis?: unknown,
-  professionalFeedback?: string
+  sources: { id: string; content: string }[]
 ) {
-  const primarySourceId = sources[0]?.id || "src_default";
-  const combinedText = sources.map((s) => s.content).join("\n\n");
-  const lowerText = combinedText.toLowerCase();
-
-  // Detección orientada exclusivamente al caso demo de turnos médicos
-  const isMedicalDemo =
-    lowerText.includes("turno") &&
-    (lowerText.includes("médic") ||
-      lowerText.includes("confirmad") ||
-      lowerText.includes("proceso"));
-
-  if (isMedicalDemo) {
-    if (
-      professionalFeedback &&
-      (professionalFeedback.toLowerCase().includes("separar") ||
-        professionalFeedback.toLowerCase().includes("confirmación") ||
-        professionalFeedback.toLowerCase().includes("progreso"))
-    ) {
-      // Caso demo con corrección aplicada:
-      // "Separar el problema de confirmación del turno del problema de progreso del proceso"
-      return {
-        isFallback: true,
-        resumen_investigacion:
-          "Investigación cualitativa sobre experiencia de solicitud de turnos médicos (revisión metodológica aplicada con corrección profesional).",
-        patrones: [
-          {
-            nombre: "Dificultad de orientación e inicio al solicitar turno",
-            descripcion:
-              "Los usuarios experimentan fricción y confusión en los primeros pasos del flujo para localizar y comenzar la reserva de su turno.",
-            evidencias: [
-              {
-                texto: "Usuario 1: Me costó encontrar dónde sacar el turno.",
-                sourceId: primarySourceId,
-              },
-              {
-                texto: "Usuario 3: Había demasiadas opciones y me confundí.",
-                sourceId: primarySourceId,
-              },
-            ],
-            cantidad_evidencias: 2,
-            necesidad_relacionada:
-              "Claridad visual e inicio directo y sin sobrecarga cognitiva.",
-            pain_point:
-              "Sobrecarga de opciones e invisibilidad del punto de partida.",
-            nivel_respaldo: "Medio",
-          },
-        ],
-        observaciones_aisladas: [
-          "Usuario 2: No entendía si el turno había quedado confirmado (incertidumbre sobre el estado final).",
-          "Usuario 4: Quería saber cuánto faltaba para terminar el proceso (falta de indicador de progreso durante el flujo).",
-        ],
-        contradicciones: [],
-        preguntas_abiertas: [
-          "¿El problema de encontrar el turno ocurre en la home o tras iniciar sesión?",
-          "¿Los usuarios prefieren confirmación por email o notificación inmediata en pantalla?",
-        ],
-        advertencias_metodologicas: [
-          "Muestra cualitativa reducida (4 usuarios). Los hallazgos aislados deben contrastarse en una ronda ampliada antes de considerarse patrones generalizables.",
-          "Corrección profesional aplicada: se separaron los aspectos de confirmación y progreso del proceso en observaciones aisladas al contar con una sola evidencia cada uno.",
-        ],
-        estado_validacion: "Pendiente de validación profesional",
-      };
-    }
-
-    // Análisis inicial caso demo turnos médicos
-    return {
-      isFallback: true,
-      resumen_investigacion:
-        "Análisis de 4 testimonios de usuarios en proceso de reserva de turnos médicos.",
-      patrones: [
-        {
-          nombre: "Fricción en la localización y selección inicial del turno",
-          descripcion:
-            "Los usuarios manifiestan dificultad para identificar el acceso principal al flujo y se sienten abrumados por la cantidad de opciones disponibles.",
-          evidencias: [
-            {
-              texto: "Usuario 1: Me costó encontrar dónde sacar el turno.",
-              sourceId: primarySourceId,
-            },
-            {
-              texto: "Usuario 3: Había demasiadas opciones y me confundí.",
-              sourceId: primarySourceId,
-            },
-          ],
-          cantidad_evidencias: 2,
-          necesidad_relacionada:
-            "Acceso directo, intuitivo y con menor carga de opciones iniciales.",
-          pain_point:
-            "Desorientación inicial y sobrecarga de opciones en el catálogo de turnos.",
-          nivel_respaldo: "Medio",
-        },
-      ],
-      observaciones_aisladas: [
-        "Usuario 2: No entendía si el turno había quedado confirmado.",
-        "Usuario 4: Quería saber cuánto faltaba para terminar el proceso.",
-      ],
-      contradicciones: [],
-      preguntas_abiertas: [
-        "¿Qué canales de confirmación son más esperados por los pacientes (SMS, WhatsApp, Email)?",
-        "¿Cuál es la tasa de abandono en cada paso del proceso actual?",
-      ],
-      advertencias_metodologicas: [
-        "Muestra de 4 comentarios cualitativos. No generalizar métricas cuantitativas a partir de esta muestra.",
-      ],
-      estado_validacion: "Pendiente de validación profesional",
-    };
-  }
-
-  // Fallback metodológico estricto para cualquier input genérico donde no se pueda asegurar recurrencia semántica:
-  // - 0 patrones (nunca agrupar testimonios solo por cantidad)
-  // - Todos los testimonios pasan a observaciones aisladas
-  // - Advertencia metodológica explícita
-  const allLines = combinedText
-    .split("\n")
-    .map((l) => l.trim())
-    .filter((l) => l.length > 0);
+  const count = sources.length;
+  const observations = sources
+    .map((s) => s.content.trim())
+    .filter((c) => c.length > 0);
 
   return {
     isFallback: true,
-    resumen_investigacion: `Registro de ${sources.length} fuente(s) de investigación y ${allLines.length} testimonio(s) cualitativo(s).`,
+    resumen_investigacion: `Se recibieron ${count} fuente(s) de investigación. No se generaron patrones automáticamente porque no fue posible realizar el análisis semántico con IA.`,
     patrones: [],
     observaciones_aisladas:
-      allLines.length > 0
-        ? allLines
+      observations.length > 0
+        ? observations
         : ["No se ingresaron testimonios o citas en las fuentes provistas."],
     contradicciones: [],
     preguntas_abiertas: [
-      "¿Se requiere ampliar el número de participantes para identificar patrones recurrentes verificables?",
+      "¿Se requiere ampliar el número de participantes o configurar la API de IA para identificar patrones recurrentes verificables?",
     ],
     advertencias_metodologicas: [
-      "No existe evidencia suficiente de recurrencia semántica comprobada para consolidar patrones. Todos los testimonios se mantienen como observaciones aisladas para evitar falsos positivos metodológicos.",
+      "No fue posible realizar agrupación semántica con IA. Las evidencias se conservan como observaciones aisladas para evitar inferir patrones sin respaldo suficiente.",
     ],
     estado_validacion: "Pendiente de validación profesional",
   };
@@ -281,8 +170,6 @@ function generateMethodologicalFallback(
 
 export async function POST(req: NextRequest) {
   let parsedSources: { id: string; content: string }[] = [];
-  let parsedPreviousAnalysis: unknown = undefined;
-  let parsedProfessionalFeedback: string | undefined = undefined;
 
   try {
     const body = await req.json();
@@ -292,8 +179,6 @@ export async function POST(req: NextRequest) {
       professionalFeedback?: string;
     };
     parsedSources = sources || [];
-    parsedPreviousAnalysis = previousAnalysis;
-    parsedProfessionalFeedback = professionalFeedback;
 
     if (!sources || !Array.isArray(sources) || sources.length === 0) {
       return NextResponse.json(
@@ -306,11 +191,7 @@ export async function POST(req: NextRequest) {
 
     // Si no hay API key disponible, usar fallback metodológico transparente
     if (!apiKey) {
-      const fallbackResult = generateMethodologicalFallback(
-        sources,
-        previousAnalysis,
-        professionalFeedback
-      );
+      const fallbackResult = generateMethodologicalFallback(sources);
       return NextResponse.json({
         data: fallbackResult,
         source: "fallback",
@@ -366,11 +247,7 @@ Analiza de manera objetiva las fuentes de investigación anteriores aplicando la
 
     // Fallback defensivo ante errores en tiempo de ejecución
     try {
-      const fallbackResult = generateMethodologicalFallback(
-        parsedSources,
-        parsedPreviousAnalysis,
-        parsedProfessionalFeedback
-      );
+      const fallbackResult = generateMethodologicalFallback(parsedSources);
       return NextResponse.json({
         data: fallbackResult,
         source: "fallback",
