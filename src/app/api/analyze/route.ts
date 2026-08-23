@@ -222,7 +222,7 @@ Analiza de manera objetiva las fuentes de investigación anteriores aplicando la
     }
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
