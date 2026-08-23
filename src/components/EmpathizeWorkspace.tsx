@@ -248,7 +248,7 @@ export function EmpathizeWorkspace({
             </h2>
             <p className="mt-1 max-w-lg text-sm text-text-secondary font-sans">
               La IA identifica patrones respaldados por evidencia, observaciones aisladas y advertencias.
-              El profesional valida, edita o descarta cada entrega.
+              El profesional valida, edita o descarta cada propuesta.
             </p>
           </div>
 
