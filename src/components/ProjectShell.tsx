@@ -11,6 +11,7 @@ import { EmpathizeWorkspace } from "./EmpathizeWorkspace";
 import { DefineWorkspace } from "./DefineWorkspace";
 import { IdeateWorkspace } from "./IdeateWorkspace";
 import { PrototypeWorkspace } from "./PrototypeWorkspace";
+import { TestWorkspace } from "./TestWorkspace";
 
 interface ProjectShellProps {
   projectId: string;
@@ -84,7 +85,13 @@ export function ProjectShell({ projectId }: ProjectShellProps) {
             />
           )}
           {currentStage === "prototipar" && (
-            <PrototypeWorkspace projectId={project.id} />
+            <PrototypeWorkspace
+              projectId={project.id}
+              onContinueToTest={() => setCurrentStage("testear")}
+            />
+          )}
+          {currentStage === "testear" && (
+            <TestWorkspace projectId={project.id} />
           )}
         </div>
       </div>

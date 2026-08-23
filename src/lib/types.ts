@@ -153,3 +153,43 @@ export interface PrototypeResult {
   createdAt: string;
 }
 
+/**
+ * Tarea estructurada para la prueba de usabilidad.
+ */
+export interface TestTask {
+  id: string;
+  orden: number;
+  objetivo: string;
+  instruccionNeutral: string;
+  hipotesisRelacionada: string;
+}
+
+/**
+ * Criterio cualitativo de evaluación para una hipótesis.
+ */
+export interface EvaluationCriterion {
+  id: string;
+  hipotesis: string;
+  evidenciaApoyaria: string;
+  evidenciaCuestionaria: string;
+}
+
+/**
+ * Resultado / Plan estructurado de la etapa Testear.
+ */
+export interface TestResult {
+  id: string;
+  projectId: string;
+  objetivo: string;
+  hipotesis: DesignHypothesis[];
+  perfilParticipantes: string;
+  escenario: string;
+  tareas: TestTask[];
+  preguntasPosteriores: string[];
+  queObservar: string[];
+  criteriosEvaluacion: EvaluationCriterion[];
+  estadoValidacion: ValidationStatus;
+  createdAt: string;
+}
+
+
